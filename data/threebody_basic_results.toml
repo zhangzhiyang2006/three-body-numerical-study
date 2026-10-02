@@ -1,0 +1,11 @@
+[two]
+reference_error = 1.5720758028692217e-13
+halving_difference = 1.9806378759312793e-13
+
+[three]
+reference_error = 1.4654943925052066e-12
+halving_difference = 1.3367085216486885e-13
+
+[single]
+reference_error = 1.509903313490213e-13
+halving_difference = 2.3092638912203256e-13

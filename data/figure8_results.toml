@@ -1,0 +1,9 @@
+one_period_reference_difference = 1.62186930552366e-12
+minimum_distance = 0.6905266245833701
+period = 6.32591398
+one_period_closure = 3.896327716024217e-8
+choreography_residual = 2.833017433492846e-8
+twenty_period_position_closure = 5.749015850376772e-7
+twenty_period_reference_difference = 2.2447619235643756e-8
+twenty_period_velocity_closure = 7.48636123260038e-7
+energy_drift = 8.617440094838003e-11

@@ -1,0 +1,106 @@
+{
+  "method": "DOP853",
+  "scipy": "1.18.1",
+  "numpy": "2.5.3",
+  "G": 1.0,
+  "rtol": 3e-14,
+  "atol": 3e-16,
+  "comparison_rtol": 1e-12,
+  "comparison_atol": 1e-14,
+  "cases": {
+    "single": {
+      "masses": [
+        1.0
+      ],
+      "initial_state": [
+        0.0,
+        2.0,
+        1.0,
+        0.0
+      ],
+      "end_time": 50.0,
+      "samples": 501,
+      "reference_tolerance_difference": 9.965361869035405e-12,
+      "nfev": 1091,
+      "analytic_error": 5.098144129078719e-13
+    },
+    "two": {
+      "masses": [
+        0.3,
+        0.03
+      ],
+      "initial_state": [
+        2.0,
+        2.0,
+        0.0,
+        0.0,
+        0.2,
+        -0.2,
+        -0.01,
+        0.01
+      ],
+      "end_time": 20.0,
+      "samples": 201,
+      "reference_tolerance_difference": 6.7696959149543545e-12,
+      "nfev": 842
+    },
+    "three": {
+      "masses": [
+        0.3,
+        0.03,
+        0.03
+      ],
+      "initial_state": [
+        2.0,
+        2.0,
+        0.0,
+        0.0,
+        -2.0,
+        -2.0,
+        0.2,
+        -0.2,
+        0.0,
+        0.0,
+        -0.2,
+        0.2
+      ],
+      "end_time": 30.0,
+      "samples": 301,
+      "reference_tolerance_difference": 2.6504132222271437e-11,
+      "nfev": 1463
+    },
+    "figure8": {
+      "masses": [
+        1.0,
+        1.0,
+        1.0
+      ],
+      "initial_state": [
+        -0.97000436,
+        0.24308753,
+        0.0,
+        0.0,
+        0.97000436,
+        -0.24308753,
+        0.466203685,
+        0.43236573,
+        -0.93240737,
+        -0.86473146,
+        0.466203685,
+        0.43236573
+      ],
+      "end_time": 126.5182796,
+      "samples": 12001,
+      "reference_tolerance_difference": 5.222250770708925e-09,
+      "nfev": 74132
+    }
+  },
+  "files": {
+    "single.csv": "53ee69f4cb84b8f1e426f3937a97ca6f2e0622280b2085cf5f9b6e806d417ee9",
+    "two_pert.csv": "f5acd497e3910dc2b8fc6024743f3b86d1f6462fe03922a439c3452192e1cd13",
+    "two.csv": "ee2de6c3f4aa3d7af97ee6f8501d907c88e01d7b2f3c3bee4829b9126890022e",
+    "figure8.csv": "6e41954df7be23620f7ed0426ef48f72742f0082ae56e0c166e20d5c77263168",
+    "three_pert.csv": "b0d3967853f8ca8a65cd51917584c1894cc39dabd5e2027b12fb87a4d52e301a",
+    "three.csv": "3054127926c9b3b178c970bb449d96aa3d757d228777838ecee4ef4148e040e4"
+  }
+}
