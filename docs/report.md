@@ -101,17 +101,45 @@ R(t) = R(0) + P(0)t/M (1-4)
 
 伪代码2  多重数值验证
 
-对每个算例，以 h 与 h/2 积分并在公共时间网格比较。
+输入：算例集合 C；步长 h；公共采样网格 Γ；扰动集合 {10⁻⁶, 10⁻⁸}
+输出：验证记录 Q（参考差、收敛差、守恒量、反演和轨道诊断）
 
-若有解析解，比较完整位置和速度；否则比较独立参考轨迹。
+01  Q ← ∅
+02  for c ∈ C do
+03      Z_h ← RK4(c, h)
+04      Z_h/2 ← RK4(c, h/2)
+05      Q[c].step ← max_{t∈Γ} ‖Z_h(t) − Z_h/2(t)‖∞
+06      if c 有解析解 A_c(t) then
+07          Q[c].reference ← max_{t∈Γ} ‖Z_h(t) − A_c(t)‖∞
+08      else
+09          Z_ref ← DOP853(c, Γ)
+10          Q[c].reference ← max_{t∈Γ} ‖Z_h(t) − Z_ref(t)‖∞
+11      end if
+12      if c 为相互作用的多体系统 then
+13          Q[c].conservation ← 漂移(E, P, Lz, R(t) − R(0) − P(0)t/M)
+14      end if
+15      c_rev ← 将 c 的初态替换为 (r_h(T), −v_h(T))
+16      Z_rev ← RK4(c_rev, h)
+17      Q[c].reverse ← ‖(r_rev(T), −v_rev(T)) − z₀‖∞
+18      if c 配置了初值扰动 then
+19          for δ ∈ {10⁻⁶, 10⁻⁸} do
+20              Z_δ,h ← RK4(扰动(c, δ), h)
+21              Z_δ,h/2 ← RK4(扰动(c, δ), h/2)
+22              D_δ,h(t) ← 去质心位置差(Z_δ,h(t), Z_h(t))
+23              D_δ,h/2(t) ← 去质心位置差(Z_δ,h/2(t), Z_h/2(t))
+24              Q[c,δ].response ← D_δ,h(T)
+25              Q[c,δ].step ← max_{t∈Γ} |D_δ,h(t) − D_δ,h/2(t)|
+26          end for
+27      end if
+28      if c 为八字算例 then
+29          Q[c].closure ← ‖Z_h(T) − Z_h(0)‖∞
+30          Q[c].symmetry ← max_t ‖Z_h(t + T/3) − ΠZ_h(t)‖∞
+31          Q[c].distance ← min_{t, i<j} ‖rᵢ(t) − rⱼ(t)‖₂
+32      end if
+33  end for
+34  return Q
 
-检查 E、P、Lz 的漂移以及质心对式（1-4）的偏离。
-
-将末态速度反号，再正向积分相同时间；恢复速度符号后与初态比较。
-
-对两档初值扰动去除各自质心运动，并检查扰动信号的步长收敛。
-
-对八字算例另检查周期闭合、T/3 循环置换与最小两体距离。
+其中，去质心位置差是两条轨迹在各自质心系中所有物体位置差的欧氏范数；Π 表示三体编号的循环置换。
 
 2  基本任务结果与分析
 
