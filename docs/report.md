@@ -2,30 +2,30 @@
 
 三体运动数值验证与八字轨道复现
 
-作者：张志杨
+作者：匿名作者
 
-（天津大学机械工程学院；工程力学强基班；学号 3024201037）
+（天津大学机械工程学院；工程力学强基班；学号已省略）
 
-摘要：本文按固定中心力、二体和三体的顺序计算引力轨道，并复现等质量三体的八字轨道。程序采用四阶龙格—库塔法，通过解析解、守恒量、步长减半、时间反演和独立的 DOP853 参考轨迹检验结果。给定单体算例得到抛物线；二体在质心系中的相对轨道为椭圆；三体在计算时段内明显分离。基本算例与独立参考的最大状态差处于 10⁻¹³ 至 10⁻¹² 量级。八字轨道的一周期闭合残差约为 3.90×10⁻⁸，计算 20 周期后仍保持八字形态。步长扫描显示，闭合残差的平台主要来自初值和周期的小数精度。这些结果说明给定时段内的数值计算可靠，但有限时间内的分离与闭合轨迹均不足以证明永久逃逸、混沌或长期稳定性。
+摘要：本文按固定中心力、二体和三体的顺序计算引力轨道，并复现等质量三体的八字轨道。程序采用四阶龙格—库塔法，通过解析解、守恒量、步长减半、时间反演和独立的 DOP853 参考轨迹检验结果。给定单体算例得到抛物线；二体在质心系中的相对轨道为椭圆，延长计算后显示完整一周；三体延长至 T=200 时，第三体与前两体的距离均超过 84。基本算例与独立参考的最大状态差处于 10⁻¹³ 至 10⁻¹² 量级。八字轨道的一周期闭合残差约为 3.90×10⁻⁸，计算 20 周期后仍保持八字形态。步长扫描显示，闭合残差的平台主要来自初值和周期的小数精度。
 
 关键词：三体问题；龙格—库塔法；数值验证；八字轨道；初值敏感性
 
 Numerical Validation of Three Body Motion and
 Reproduction of the Figure Eight Orbit
 
-Author: ZHANG Zhiyang
+Author: Anonymous Author
 
-(School of Mechanical Engineering, Tianjin University; Engineering Mechanics; Student ID 3024201037)
+(School of Mechanical Engineering, Tianjin University; Engineering Mechanics; Student ID omitted)
 
-Abstract: This paper computes gravitational trajectories in the order of the fixed-center, two-body, and three-body problems, followed by the equal-mass figure-eight orbit. The calculations use a Julia implementation of the classical fourth-order Runge–Kutta method. We check the results against an analytical orbit where available, an independent DOP853 solution, conservation laws, step refinement, and time reversal. With the prescribed initial conditions, the fixed-center orbit is parabolic. In the two-body case, the relative orbit is elliptical and the center of mass moves uniformly. The three-body trajectories separate over the simulated interval, although this does not establish permanent escape or chaos. For the basic examples, the largest state differences from the independent reference are of order 10⁻¹³ to 10⁻¹². Two small velocity perturbations are also tested in each interacting system after removing its own center-of-mass motion; their effects remain distinguishable from numerical error. For the additional figure-eight case, we examine one-period closure, the cyclic exchange of bodies after one third of a period, minimum pairwise distance, and conservation errors over twenty periods. The orbit retains its figure-eight shape, while the one-period closure residual levels off near 3.90×10⁻⁸. A step-size scan indicates that the plateau is mainly due to the decimal precision of the initial state and period. These checks support the reported trajectories over the stated intervals. They do not, by themselves, prove long-term stability or the existence of an exact periodic orbit.
+Abstract: This paper computes gravitational trajectories in the order of the fixed-center, two-body, and three-body problems, followed by the equal-mass figure-eight orbit. The calculations use a Julia implementation of the classical fourth-order Runge–Kutta method. Results are checked against an analytical orbit where available, an independent DOP853 solution, conservation laws, step refinement, and time reversal. With the prescribed initial conditions, the fixed-center orbit is parabolic. The relative two-body orbit is elliptical; an extended calculation displays one complete revolution. In the three-body case, the third body is more than 84 length units from each of the other two at t=200. For the basic validation intervals, the largest state differences from the independent reference are of order 10⁻¹³ to 10⁻¹². Two small velocity perturbations are tested in each interacting system after removing its own center-of-mass motion; their effects remain distinguishable from numerical error. For the additional figure-eight case, we examine one-period closure, the cyclic exchange of bodies after one third of a period, minimum pairwise distance, and conservation errors over twenty periods. The orbit retains its figure-eight shape, while the one-period closure residual levels off near 3.90×10⁻⁸. A step-size scan indicates that the plateau is mainly due to the decimal precision of the initial state and period.
 
 Keywords: three-body problem; Runge–Kutta method; numerical validation; figure-eight orbit; initial-condition sensitivity
 
 引言
 
-固定中心力问题有可供核对的开普勒解；孤立二体可分解为质心运动和相对运动。三体相互作用则把三个天体的轨道耦合在一起，通常需要针对给定初值进行数值积分。判断积分是否可信，不能只看轨迹图：计算步长、守恒量、质心运动和初值扰动都提供了不同的检验线索。
+固定中心力问题有可供核对的开普勒解；孤立二体可分解为质心运动和相对运动。三体相互作用则把三个天体的轨道耦合在一起，通常需要针对给定初值进行数值积分。判断积分是否可信，应同时检查轨迹图、计算步长、守恒量、质心运动和初值扰动。
 
-八字轨道是三体问题中一个特别的周期解：三个等质量天体沿同一条八字曲线依次运动。Moore 于 1993 年通过数值探索发现这一轨道[1]；Chenciner 与 Montgomery 后来证明了它的存在性[2]。关于其稳定性和分岔，后续还有专门研究[3]。因此，轨迹在图上闭合，并不等于已经证明它长期稳定。
+八字轨道是三体问题中一个特别的周期解：三个等质量天体沿同一条八字曲线依次运动。Moore 于 1993 年通过数值探索发现这一轨道[1]；Chenciner 与 Montgomery 后来证明了它的存在性[2]。关于其稳定性和分岔，后续还有专门研究[3]。本文以闭合残差和循环置换误差检验数值复现结果。
 
 已有工作还提供了结构保持积分方法[4]、开源多体程序 REBOUND[5]、高阶积分器 IAS15[6]及 Julia 微分方程生态[7]。这些工作说明三体计算已有多种成熟工具，但本报告仍从课堂初值和自编 RK4 程序出发，按单体、二体、三体的顺序验证，最后复现八字轨道。REBOUND、IAS15 和 DifferentialEquations.jl 只用于介绍相关工作；实际的独立对照采用 SciPy DOP853。
 
@@ -84,7 +84,7 @@ P = ∑ᵢ mᵢvᵢ，　Lz = ∑ᵢ mᵢ(xᵢvᵧᵢ − yᵢvₓᵢ) (1-3)
 
 R(t) = R(0) + P(0)t/M (1-4)
 
-本文将同一采样时刻所有无量纲状态分量的最大绝对差记为参考差。基本算例每隔 0.1 采样一次，守恒量则在主积分的每一步检查。DOP853 的容差设为 rtol=3×10⁻¹⁴、atol=3×10⁻¹⁶，并用较宽容差再算一次。参考轨迹也受离散和舍入误差影响，两种算法吻合不能视为严格的误差上界。
+本文将同一采样时刻所有无量纲状态分量的最大绝对差记为参考差。基本算例每隔 0.1 采样一次，守恒量则在主积分的每一步检查。DOP853 的容差设为 rtol=3×10⁻¹⁴、atol=3×10⁻¹⁶，并用较宽容差再算一次。参考轨迹也受离散和舍入误差影响，本文将两种算法的差值作为数值一致性指标。
 
 伪代码2  多重数值验证
 
@@ -150,11 +150,11 @@ RK4 与解析解的完整状态最大相差 4.14×10⁻¹³，与独立 DOP853 �
 
 2.2  二体轨道、验证与微扰
 
-取 m₁=0.30、m₂=0.03，初始位置分别为 (2,2)、(0,0)，初始速度分别为 (0.2,−0.2)、(−0.01,0.01)，积分至 T=20。初始总动量 P₀=(0.0597,−0.0597)，故惯性系轨迹含质心平动；图 2-2 在各自质心系中显示相对轨道。
+取 m₁=0.30、m₂=0.03，初始位置分别为 (2,2)、(0,0)，初始速度分别为 (0.2,−0.2)、(−0.01,0.01)。基本验证与扰动分析使用 T=20；为画出一整周相对轨道，图 2-2 将同一初值延长积分至 T=40。初始总动量 P₀=(0.0597,−0.0597)，因此图中采用质心系坐标。
 
-去除质心平动后，内部能量为 −0.00197925，半长轴约 2.273585、偏心率约 0.244039、周期约 37.4964，故相对运动为椭圆。总能量虽为正值 0.00882102，但包含整体平动能；T=20 尚未覆盖一整周，不能以图线未闭合判断积分失败。
+去除质心平动后，内部能量为 −0.00197925，半长轴约 2.273585、偏心率约 0.244039、周期约 37.4964。图 2-2 显示两体在 T=40 内完成一周多的椭圆运动，星形标记对应原验证终点 T=20。总能量 0.00882102 包含整体平动能；判断相对轨道形状时采用内部能量。
 
-图2-2  二体运动的质心系轨迹
+图2-2  二体质心系完整相对轨道（0≤t≤40；圆点、星号、菱形分别为 t=0、20、40）
 
 ![二体质心系轨迹](../figures/two_com.png)
 
@@ -168,33 +168,33 @@ RK4 与解析解的完整状态最大相差 4.14×10⁻¹³，与独立 DOP853 �
 
 2.3  三体轨道、验证与微扰
 
-取 m₁=0.30、m₂=m₃=0.03，初始位置依次为 (2,2)、(0,0)、(−2,−2)，初始速度依次为 (0.2,−0.2)、(0,0)、(−0.2,0.2)，积分至 T=30。初始质心为 (1.5,1.5)，质心速度为 (0.15,−0.15)；图 2-4 给出质心系运动轨迹。
+取 m₁=0.30、m₂=m₃=0.03，初始位置依次为 (2,2)、(0,0)、(−2,−2)，初始速度依次为 (0.2,−0.2)、(0,0)、(−0.2,0.2)。基本验证与扰动分析使用 T=30；图 2-4 将相同初值的轨迹延长至 T=200，并列出前 30 时间单位的局部图。初始质心为 (1.5,1.5)，质心速度为 (0.15,−0.15)。
 
-图2-4  三体运动的质心系轨迹
+图2-4  三体质心系轨迹：0≤t≤200 总览与 0≤t≤30 局部（圆点为起点，菱形为终点）
 
 ![三体质心系轨迹](../figures/three_com.png)
 
-在 T=30 时，三组两体距离约为 2.5783、14.5385、15.3203，距离变化见图 2-5；全步最小两体距离约为 1.4621。总能量约 0.00810883，内部能量约 8.83118×10⁻⁶。第三体在观测时段内远离前两体，但有限时间轨迹尚不能证明永久逃逸，也不能直接证明混沌。
+在 T=30 时，三组两体距离约为 2.5783、14.5385、15.3203；该时段的最小两体距离约为 1.4621。继续积分至 T=200，三组距离依次为 2.7179、84.0268、84.9222，变化过程见图 2-5。前两体保持在相近区域运动，第三体逐渐远离。T=200 时步长减半得到的最大状态差为 4.12×10⁻¹¹。初始总能量约为 0.00810883，内部能量约为 8.83118×10⁻⁶。
 
-图2-5  三体算例中三组两体距离随时间的变化
+图2-5  三组两体距离在 0≤t≤200 内的变化（虚线为原验证终点 t=30）
 
 ![三组两体距离](../figures/three_distances.png)
 
 三体轨迹与独立 DOP853 结果的最大状态差为 1.47×10⁻¹²；步长减半差为 1.34×10⁻¹³，时间反演误差为 5.31×10⁻¹⁵。全部积分步上，能量、动量、角动量和质心运动的最大偏差依次约为 3.59×10⁻¹⁶、8.19×10⁻¹⁶、3.44×10⁻¹⁵ 和 3.91×10⁻¹⁴。守恒量的变化很小，独立轨迹与步长检验也给出一致结果。
 
-分别将第三体初始 x 方向速度增加 10⁻⁶ 和 10⁻⁸，并在各自质心系中比较轨迹。T=30 时，全体位置差分别为 3.398810×10⁻⁵ 和 3.398811×10⁻⁷。图 2-6 显示，按扰动幅值归一化后，两档响应几乎重合；对应的步长减半差约为 10⁻¹³。这里观察的是有限时间内的初值响应，尚未计算 Lyapunov 指数。
+分别将第三体初始 x 方向速度增加 10⁻⁶ 和 10⁻⁸，并在各自质心系中比较轨迹。T=30 时，全体位置差分别为 3.398810×10⁻⁵ 和 3.398811×10⁻⁷。图 2-6 显示，按扰动幅值归一化后，两档响应几乎重合；对应的步长减半差约为 10⁻¹³。
 
 图2-6  三体去质心轨迹差随时间的变化（纵轴为位置差／速度扰动幅值）
 
 ![三体初值扰动响应](../figures/three_sensitivity.png)
 
-本算例的检验依据是能量、动量和角动量守恒，质心匀速直线运动，步长减半、时间反演，以及独立 DOP853 轨迹对照；数值积分与多体方法可参见文献[4-6,11]。这些检验支持给定时段内的计算结果，无法单独说明三体系统的长期运动。
+本算例的检验依据是能量、动量和角动量守恒，质心匀速直线运动，步长减半、时间反演，以及独立 DOP853 轨迹对照；数值积分与多体方法可参见文献[4-6,11]。这些检验给出了本算例在 T=30 内的数值精度依据；延长轨迹另用步长减半检查。
 
 3  八字周期轨道复现
 
 3.1  文献对应与初始条件
 
-本节复现三个等质量天体沿同一八字曲线依次运动的周期解[1-2]。这里计算轨道本身，不重做 Moore 寻找轨道时使用的作用量极小化过程。初值取自 GeometricProblems.jl 的公开三体示例[15]，并按本文的物体编号重排。表中的小数来自该示例，不能直接写成 Moore 论文给出的初值。
+本节复现三个等质量天体沿同一八字曲线依次运动的周期解[1-2]。这里计算轨道本身，不重做 Moore 寻找轨道时使用的作用量极小化过程。初值取自 GeometricProblems.jl 的公开三体示例[15]，并按本文的物体编号重排。表中的小数明确标注为该示例提供的初值。
 
 取 G=1、m₁=m₂=m₃=1、近似周期 T=6.32591398。它是与基本任务质量比例不同的独立算例。表 3-1 的初态满足质心在原点、总动量和总角动量为零。
 
@@ -231,7 +231,7 @@ RK4 与解析解的完整状态最大相差 4.14×10⁻¹³，与独立 DOP853 �
 4800 | 3.90×10⁻⁸ | 3.05×10⁻¹¹
 9600 | 3.90×10⁻⁸ | 1.62×10⁻¹²
 
-步长减小时，RK4 与 DOP853 的参考差持续下降，周期闭合残差却停在约 3.90×10⁻⁸。DOP853 自身的一周期闭合残差也约为 3.90×10⁻⁸，说明这一平台与初值及周期的小数截断相符，不能据此判断 RK4 不收敛。每周期 600 步时的闭合残差虽偶然较小，参考差并未同步达到最小。
+步长减小时，RK4 与 DOP853 的参考差持续下降，周期闭合残差却停在约 3.90×10⁻⁸。DOP853 自身的一周期闭合残差也约为 3.90×10⁻⁸，说明这一平台与初值及周期的小数截断相符，RK4 的参考差则持续收敛。每周期 600 步时的闭合残差虽偶然较小，参考差并未同步达到最小。
 
 在本文物体顺序下，时间推进 T/3 后，完整状态应对应原状态的物体置换 (1, 2, 3)→(3, 1, 2)。采用每周期 2400 步，第一周期内的位置与速度联合置换残差约为 2.83×10⁻⁸，支持三体沿同一路径依次追逐的舞蹈对称性。
 
@@ -245,7 +245,7 @@ RK4 与解析解的完整状态最大相差 4.14×10⁻¹³，与独立 DOP853 �
 
 [图] 图3-2  八字轨道的步长扫描与二十周期检验
 
-图 3-2 给出积分误差、周期闭合残差和局部相位投影。相位投影把位置误差分解到参考速度方向，只用来区分沿轨道与横向的偏离，不是对全局相位的精确重建。积分 20 周期后仍呈八字形，也不能据此断言轨道在无限时间内稳定；相关的存在性证明和稳定性分析见文献[2-3]。
+图 3-2 给出积分误差、周期闭合残差和局部相位投影。相位投影把位置误差分解到参考速度方向，只用来区分沿轨道与横向的偏离，不是对全局相位的精确重建。本文报告 20 周期轨迹与误差；轨道存在性和局部稳定性的理论分析见文献[2-3]。
 
 4  可复现性与项目组织
 
